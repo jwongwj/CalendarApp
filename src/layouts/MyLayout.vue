@@ -53,11 +53,6 @@
           <q-item-side icon="exit_to_app" />
           <q-item-main label="Logout" />
         </q-item>
-        <label class="doc-row-definition row flex-center">Design By: Jayden Wong</label>
-        <q-item class="doc-row-definition row flex-center" @click.native="openURL('https://github.com/jwongwj/piggy')">
-          <q-item-side icon="code" />
-          <q-item-main label="GitHub Repo" />
-        </q-item>
       </q-list>
     </q-layout-drawer>
 
