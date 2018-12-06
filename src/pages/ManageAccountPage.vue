@@ -1,51 +1,43 @@
 <template>
   <q-page class="" >
+    <div>
+        <button @click="addMth">Add</button>
+        <label>   {{mth}}/{{year}}   </label>    
+    <button @click="subMth">Subtract</button>
+    </div>
     <table>
       <th>
         <tr>
-          <label style="float:left; padding: 5px;">Mon</label>
-          <label style="float:left; padding: 5px;">Tue</label>
-          <label style="float:left; padding: 5px;">Wed</label>
-          <label style="float:left; padding: 5px;">Thu</label>
-          <label style="float:left; padding: 5px;">Fri</label>
-          <label style="float:left; padding: 5px;">Sat</label>
-          <label style="float:left; padding: 5px;">Sun</label>
+          <label class="headerCells">Mon</label>
+          <label class="headerCells">Tue</label>
+          <label class="headerCells">Wed</label>
+          <label class="headerCells">Thu</label>
+          <label class="headerCells">Fri</label>
+          <label class="headerCells">Sat</label>
+          <label class="headerCells">Sun</label>
         </tr>
-        <tr v-for="(ea,index) in allArr" :key="index" style="text-align: none;"><label style="float:left; padding: 10px;" v-for="(v, ind) in ea" :key="ind">{{v}}</label></tr>
+        <tr v-for="(ea,index) in allArr" :key="index">
+          <button class="indvCells" v-for="(v, ind) in ea" :key="ind">{{v}}</button>
+        </tr>
       </th>
     </table>
-    <button @click="addMth">Add</button>
-    <button @click="subMth">Subtract</button>
-    <!-- <div>
-      <div v-for="(a1, index) in arr1" :key="index">
-          <label>{{a1}}</label>
-      </div>
-            <div v-for="(a1, index) in arr2" :key="index">
-          <p>{{a1}}</p>
-      </div>
-            <div v-for="(a1, index) in arr3" :key="index">
-          <p>{{a1}}</p>
-      </div>
-            <div v-for="(a1, index) in arr4" :key="index">
-          <p>{{a1}}</p>
-      </div>
-            <div v-for="(a1, index) in arr5" :key="index">
-          <p>{{a1}}</p>
-      </div>
-            <div v-for="(a1, index) in arr6" :key="index">
-          <p>{{a1}}</p>
-      </div>
 
-    </div> -->
-    <!-- <p>{{day}} </p>
-    <p>{{date}}</p>
-    <p>{{mth}}/</p>
-    <p>{{year}}</p>
-        <p>{{firstDayOfMth}}</p> -->
   </q-page>
 </template>
 
 <style>
+.indvCells{
+  float:left; 
+  padding: 10px;
+  width: 50px;
+  height: 50px;
+}
+
+.headerCells{
+  float:left; 
+  padding: 10px;
+  width: 50px;
+}
 </style>
 
 <script>
@@ -53,155 +45,98 @@ export default {
   name: "PageIndex",
   data: () => {
     return {
-      daysInAWeek: [],
       calendarDate: 0,
-      day: "",
-      date: "",
       mth: "",
       year: "",
       firstDayOfMth: "",
       arrayDates: [],
-      arr1: [],
-      arr2: [],
-      arr3: [],
-      arr4: [],
-      arr5: [],
-      arr6: [],
-      allArr: [],
-      currDateTime: ""
+      allArr: []
     };
   },
   mounted() {
-    this.setDates();
+    this.setDates(true);
   },
   methods: {
-    setDates() {
-      var date = new Date();
-      this.currDateTime = date;
-      this.day = date.getDay();
-      this.date = date.getDate();
-      var editDate = Math.abs(this.day - this.date);
-      while (editDate > 7) {
-        editDate -= 7;
-      }
-      this.firstDayOfMth = 7 - editDate;
-      this.mth = date.getMonth() + 1;
-      this.year = date.getFullYear();
-
-      var noOfDaysInMth = new Date(this.year, this.mth, 0).getDate();
-      var arr = [];
-      for (var i = 0; i < noOfDaysInMth + this.firstDayOfMth; i++) {
-        if (i < this.firstDayOfMth) {
-          this.arrayDates.push(" ");
-          arr.push(" ");
-        } else {
-          this.calendarDate++;
-          var t = this.calendarDate;
-          this.arrayDates.push(t);
-          arr.push(t);
-        }
-      }
-      this.arr1 = arr.slice(0, 7);
-      this.arr2 = arr.slice(7, 14);
-      this.arr3 = arr.slice(14, 21);
-      this.arr4 = arr.slice(21, 28);
-      this.arr5 = arr.slice(28, 35);
-      this.arr6 = arr.slice(35, arr.length);
-      this.allArr.push(
-        this.arr1,
-        this.arr2,
-        this.arr3,
-        this.arr4,
-        this.arr5,
-        this.arr6
-      );
-    },
-    resetDates(v) {
-      this.arr1 = [];
-      this.arr2 = [];
-      this.arr3 = [];
-      this.arr4 = [];
-      this.arr5 = [];
-      this.arr6 = [];
+    setDates(initialLoad) {
+      // Initialization
+      var date, day;
       this.allArr = [];
       this.calendarDate = 0;
-      var d = this.currDateTime;
-      var dd = new Date(this.year, this.mth, 1);
-      var dt = this.addMonths(dd, v);
-      this.day = dt.getDay();
-      this.date = 1;
-      var editDate = Math.abs(this.day - this.date);
+
+      // Set Date based on inital vs Subsequent load
+      if(initialLoad){
+        date = new Date();
+        day = date.getDay() + 1;
+        this.mth = date.getMonth() + 1;
+        this.year = date.getFullYear();
+      }else{
+        date = new Date(this.year, this.mth - 1, 1);
+        day = date.getDay();
+      }
+      
+      // Date formatting
+      // if (day == 0) day = 7;
+      var editDate = Math.abs(day - date.getDate());
       while (editDate > 7) {
         editDate -= 7;
       }
+      if (editDate == 0) editDate = 7;
       this.firstDayOfMth = 7 - editDate;
+      if (this.firstDayOfMth == 0) this.firstDayOfMth = 1;
 
+      // Setting array
       var noOfDaysInMth = new Date(this.year, this.mth, 0).getDate();
-
+      if (this.mth == 2) {
+        noOfDaysInMth = this.year / 4 == 0 ? 29 : 28;
+      }
       var arr = [];
-      for (var i = 0; i < noOfDaysInMth + this.firstDayOfMth; i++) {
-        if (i < this.firstDayOfMth) {
-          this.arrayDates.push(" ");
-          arr.push(" ");
-        } else {
+      for (var i = 0; i < 42; i++) {
+        if (i < day - 1) {
+          arr.push("");
+          noOfDaysInMth++;
+        } else if(i < noOfDaysInMth) {
           this.calendarDate++;
           var t = this.calendarDate;
-          this.arrayDates.push(t);
           arr.push(t);
+        }else{
+          arr.push("");
         }
       }
-      this.arr1 = arr.slice(0, 7);
-      this.arr2 = arr.slice(7, 14);
-      this.arr3 = arr.slice(14, 21);
-      this.arr4 = arr.slice(21, 28);
-      this.arr5 = arr.slice(28, 35);
-      this.arr6 = arr.slice(35, arr.length);
+      var arr1 = arr.slice(0, 7);
+      var arr2 = arr.slice(7, 14);
+      var arr3 = arr.slice(14, 21);
+      var arr4 = arr.slice(21, 28);
+      var arr5 = arr.slice(28, 35);
+      var arr6 = arr.slice(35, 42);
       this.allArr.push(
-        this.arr1,
-        this.arr2,
-        this.arr3,
-        this.arr4,
-        this.arr5,
-        this.arr6
+        arr1,
+        arr2,
+        arr3,
+        arr4,
+        arr5,
+        arr6
       );
-      console.log(`${this.mth} mth, ${this.year} yr, ${dt} datetime`);
-    },
-    increaseIndex(index) {
-      this.calendarDate++;
-      if (index == this.day - 1) {
-        return true;
-      } else {
-        return false;
+      if(arr6[0] == ""){
+        this.allArr.pop(arr6);
       }
-    },
-    firstRow(index) {
-      this.calendarDate = index + 1 - this.firstDayOfMth;
-      return this.calendarDate;
-    },
-    check(ea) {
-      console.log(ea);
-      return ea;
     },
     addMth() {
       if (this.mth == 12) {
         this.mth = 1;
-        this.year += 1;
+        this.year++;
       } else {
         this.mth++;
       }
-      this.resetDates(1);
+      this.setDates(false);
     },
     subMth() {
       if (this.mth == 1) {
         this.mth = 12;
-        this.year -= 1;
+        this.year--;
       } else {
         this.mth--;
       }
-      this.resetDates(-1);
-    },
-    addMonths(dt, n) {
-      return new Date(dt.setMonth(dt.getMonth() + n));
+      this.setDates(false);
     }
   }
 };
