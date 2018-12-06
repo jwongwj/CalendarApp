@@ -1,10 +1,18 @@
+import Layout from 'layouts/MyLayout.vue'
+import HomePage from 'pages/HomePage.vue'
+import ExpensesCategoryPage from 'pages/ExpensesCategoryPage.vue'
+import ManageAccountPage from 'pages/ManageAccountPage.vue'
+import ManageExpensesPage from 'pages/ManageExpensesPage'
 
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/MyLayout.vue'),
+    component: Layout,
     children: [
-      { path: '/', component: () => import('pages/Index.vue') }
+      { path: '/Home', component: HomePage },
+      { path: '/Expenses', component: ExpensesCategoryPage },
+      { path: '/manageacct', component: ManageAccountPage },
+      { path: '/manageexp', component: ManageExpensesPage }
     ]
   }
 ]

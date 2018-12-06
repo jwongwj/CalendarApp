@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center">
-    <label>test this</label>
+    <label>Manage Account</label>
   </q-page>
 </template>
 
