@@ -1,142 +1,128 @@
 <template>
-  <q-page class="" >
-    <div>
-        <button @click="addMth">Add</button>
-        <label>   {{mth}}/{{year}}   </label>    
-    <button @click="subMth">Subtract</button>
-    </div>
-    <table>
-      <th>
-        <tr>
-          <label class="headerCells">Mon</label>
-          <label class="headerCells">Tue</label>
-          <label class="headerCells">Wed</label>
-          <label class="headerCells">Thu</label>
-          <label class="headerCells">Fri</label>
-          <label class="headerCells">Sat</label>
-          <label class="headerCells">Sun</label>
-        </tr>
-        <tr v-for="(ea,index) in allArr" :key="index">
-          <button class="indvCells" v-for="(v, ind) in ea" :key="ind">{{v}}</button>
-        </tr>
-      </th>
-    </table>
+  <div class="formatAccountPage flex flex-center">
+    <form>
+      <p class="caption centreHeader">{{ header }}</p>
+      <div class="summary text-red" v-if="$v.form.$error">Form has errors</div>
+      <q-field :label="nameLabel" class>
+        <q-input v-model="form.name" type="text"/>
+      </q-field>
+      <q-field :label="loginLabel" class>
+        <q-input v-model="form.email" type="email" suffix="@gmail.com"/>
+      </q-field>
+      <q-field :label="pwLabel" class>
+        <q-input v-model="form.password" type="password"/>
+      </q-field>
+      <q-field helper="Select your gender" label="Gender :">
+        <q-option-group
+          type="radio"
+          color="secondary"
+          v-model="form.gender"
+          :options="[
+            { label: 'Male', value: 'M' },
+            { label: 'Female', value: 'F', color: 'red' }
+          ]"
+        />
+      </q-field>
 
-  </q-page>
+      <q-btn
+        class="btmRight"
+        :label="loginBtn"
+        color="secondary"
+        @click="login(form.name, form.email, form.password, form.gender)"
+      />
+      <q-btn
+        class="btmRight"
+        :label="backBtn"
+        style="background: goldenrod; color: white"
+        @click="back()"
+      />
+    </form>
+  </div>
 </template>
 
 <style>
-.indvCells{
-  float:left; 
-  padding: 10px;
-  width: 50px;
-  height: 50px;
+.myLoginBox {
+  background-color: rgba(255, 255, 255, 0.3);
+  margin: 0, auto;
+  height: 500px;
+  width: 880px;
+  border-style: solid;
+}
+.noOpa {
+  border-style: solid;
+  height: 196px;
 }
 
-.headerCells{
-  float:left; 
-  padding: 10px;
-  width: 50px;
+.btmRight {
+  float: right;
+}
+
+.centreHeader {
+  text-align: center;
+  font-size: 25px;
+  text-shadow: 1px 1px red;
+}
+
+.formatAccountPage {
+  border: 1px, black;
+  background-color: whitesmoke;
+  width: 800px;
+  box-shadow: 2px, 2px, 5px, grey;
+  margin-top: 20px;
+  display: inline-flex;
+  height: 88vh;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px grey;
+  top: 80px;
 }
 </style>
 
 <script>
+import {
+  required,
+  minLength,
+  email
+} from "../../node_modules/vuelidate/lib/validators";
+let l = "test";
 export default {
-  name: "PageIndex",
-  data: () => {
+  name: "signup",
+  data() {
     return {
-      calendarDate: 0,
-      mth: "",
-      year: "",
-      firstDayOfMth: "",
-      arrayDates: [],
-      allArr: []
+      loginLabel: "Login :",
+      loginBtn: "SIGN UP",
+      pwLabel: "Password :",
+      nameLabel: "Name :",
+      header: "SIGN UP",
+      backBtn: "BACK",
+      form: {
+        name: l,
+        email: "",
+        password: "",
+        gender: ""
+      }
     };
   },
-  mounted() {
-    this.setDates(true);
+  // model: {
+  //   prop: checkSignupPage
+  // },
+  validations: {
+    form: {
+      email: { required, email },
+      password: { required, minLength: minLength(8) }
+    }
   },
   methods: {
-    setDates(initialLoad) {
-      // Initialization
-      var date, day;
-      this.allArr = [];
-      this.calendarDate = 0;
-
-      // Set Date based on inital vs Subsequent load
-      if(initialLoad){
-        date = new Date();
-        day = date.getDay() + 1;
-        this.mth = date.getMonth() + 1;
-        this.year = date.getFullYear();
-      }else{
-        date = new Date(this.year, this.mth - 1, 1);
-        day = date.getDay();
-      }
-      
-      // Date formatting
-      // if (day == 0) day = 7;
-      var editDate = Math.abs(day - date.getDate());
-      while (editDate > 7) {
-        editDate -= 7;
-      }
-      if (editDate == 0) editDate = 7;
-      this.firstDayOfMth = 7 - editDate;
-      if (this.firstDayOfMth == 0) this.firstDayOfMth = 1;
-
-      // Setting array
-      var noOfDaysInMth = new Date(this.year, this.mth, 0).getDate();
-      if (this.mth == 2) {
-        noOfDaysInMth = this.year / 4 == 0 ? 29 : 28;
-      }
-      var arr = [];
-      for (var i = 0; i < 42; i++) {
-        if (i < day - 1) {
-          arr.push("");
-          noOfDaysInMth++;
-        } else if(i < noOfDaysInMth) {
-          this.calendarDate++;
-          var t = this.calendarDate;
-          arr.push(t);
-        }else{
-          arr.push("");
-        }
-      }
-      var arr1 = arr.slice(0, 7);
-      var arr2 = arr.slice(7, 14);
-      var arr3 = arr.slice(14, 21);
-      var arr4 = arr.slice(21, 28);
-      var arr5 = arr.slice(28, 35);
-      var arr6 = arr.slice(35, 42);
-      this.allArr.push(
-        arr1,
-        arr2,
-        arr3,
-        arr4,
-        arr5,
-        arr6
+    login(name, email, password, gender) {
+      console.log(
+        "name: " +
+          name +
+          " email: " +
+          email +
+          " password: " +
+          password +
+          " gender: " +
+          gender
       );
-      if(arr6[0] == ""){
-        this.allArr.pop(arr6);
-      }
-    },
-    addMth() {
-      if (this.mth == 12) {
-        this.mth = 1;
-        this.year++;
-      } else {
-        this.mth++;
-      }
-      this.setDates(false);
-    },
-    subMth() {
-      if (this.mth == 1) {
-        this.mth = 12;
-        this.year--;
-      } else {
-        this.mth--;
-      }
-      this.setDates(false);
     }
   }
 };

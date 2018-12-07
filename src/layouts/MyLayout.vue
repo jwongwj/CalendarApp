@@ -1,10 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-layout-header>
-      <q-toolbar
-        color="blue-grey-6"
-        :inverted="$q.theme === 'ios'"
-      >
+      <q-toolbar color="blue-grey-6" :inverted="$q.theme === 'ios'">
         <!-- <q-btn
           flat
           dense
@@ -13,17 +10,29 @@
           aria-label="Menu"
         >
           <q-icon name="menu" />
-        </q-btn> -->
-        <img src="../assets/images/piggy_bank_PNG97.png" style="height: 30px; width: 30px;"/>
-        <q-toolbar-title class="tabAlignment">
-          Piggy
+        </q-btn>-->
+        <img src="../assets/images/piggy_bank_PNG97.png" style="height: 30px; width: 30px;">
+        <q-toolbar-title class="tabAlignment">Piggy
           <div slot="subtitle">An Expense Tracker Made With Quasar Framework</div>
         </q-toolbar-title>
-        <router-link to="/Home"><div style="border: 1px black; padding: 10px;">Home</div></router-link>
-        <div style="border: 1px black; padding: 10px;"><router-link to="/Expenses">Add Expenses</router-link></div>
-        <div style="border: 1px black; padding: 10px;"><router-link to="/ManageExp">Manage Expenses</router-link></div>
-        <div style="border: 1px black; padding: 10px;"><router-link to="/ManageAcct">Manage Account</router-link></div>
-        <div style="border: 1px black; padding: 10px;"><router-link to="/">Logout</router-link></div>
+        <router-link to="/Home">
+          <div style="border: 1px black; padding: 10px;">Home</div>
+        </router-link>
+        <div style="border: 1px black; padding: 10px;">
+          <router-link to="/calendar">Calendar View</router-link>
+        </div>
+        <div style="border: 1px black; padding: 10px;">
+          <router-link to="/Expenses">Add Expenses</router-link>
+        </div>
+        <div style="border: 1px black; padding: 10px;">
+          <router-link to="/ManageExp">Manage Expenses</router-link>
+        </div>
+        <div style="border: 1px black; padding: 10px;">
+          <router-link to="/ManageAcct">Manage Account</router-link>
+        </div>
+        <div style="border: 1px black; padding: 10px;">
+          <router-link to="/">Logout</router-link>
+        </div>
       </q-toolbar>
     </q-layout-header>
 
@@ -58,42 +67,41 @@
           <q-item-main label="Logout" />
         </q-item>
       </q-list>
-    </q-layout-drawer> -->
-
+    </q-layout-drawer>-->
     <q-page-container>
-      <router-view />
+      <router-view/>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import { openURL } from 'quasar'
+import { openURL } from "quasar";
 export default {
-  name: 'MyLayout',
-  data () {
+  name: "MyLayout",
+  data() {
     return {
       leftDrawerOpen: this.$q.platform.is.desktop
-    }
+    };
   },
   methods: {
     openURL,
-    logout () {
-      return openURL('/')
+    logout() {
+      return openURL("/");
     }
   }
-}
+};
 </script>
 
 <style>
-.menuFooter{
+.menuFooter {
   text-align: center;
   bottom: 0;
   display: inline-block;
   top: 100px;
-  margin: 0,auto;
+  margin: 0, auto;
 }
 
-.tabAlignment{
+.tabAlignment {
   width: 50px;
 }
 </style>

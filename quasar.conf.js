@@ -43,41 +43,41 @@ module.exports = function (ctx) {
     // framework: 'all' --- includes everything; for dev only!
     framework: {
       components: [
-        'QLayout',
-        'QLayoutHeader',
-        'QLayoutDrawer',
-        'QPageContainer',
-        'QPage',
-        'QToolbar',
-        'QToolbarTitle',
-        'QBtn',
-        'QIcon',
-        'QList',
-        'QListHeader',
-        'QItem',
-        'QItemMain',
-        'QItemSide',
-        'QTabs',
-        'QTab',
-        'QTabPane',
-        'QRouteTab',
-        'QTable',
-        'QTh',
-        'QTr',
-        'QTd',
-        'QTableColumns',
-        'QCheckbox',
-        'QChip',
-        'QCard',
-        'QCardTitle',
-        'QCardMain',
-        'QCardMedia',
-        'QCardSeparator',
-        'QCardActions',
-        'QRating',
-        'QField',
-        'QDialog',
-        'QInput'
+        // 'QLayout',
+        // 'QLayoutHeader',
+        // 'QLayoutDrawer',
+        // 'QPageContainer',
+        // 'QPage',
+        // 'QToolbar',
+        // 'QToolbarTitle',
+        // 'QBtn',
+        // 'QIcon',
+        // 'QList',
+        // 'QListHeader',
+        // 'QItem',
+        // 'QItemMain',
+        // 'QItemSide',
+        // 'QTabs',
+        // 'QTab',
+        // 'QTabPane',
+        // 'QRouteTab',
+        // 'QTable',
+        // 'QTh',
+        // 'QTr',
+        // 'QTd',
+        // 'QTableColumns',
+        // 'QCheckbox',
+        // 'QChip',
+        // 'QCard',
+        // 'QCardTitle',
+        // 'QCardMain',
+        // 'QCardMedia',
+        // 'QCardSeparator',
+        // 'QCardActions',
+        // 'QRating',
+        // 'QField',
+        // 'QDialog',
+        // 'QInput'
       ],
       directives: [
         'Ripple'
@@ -85,12 +85,15 @@ module.exports = function (ctx) {
       // Quasar plugins
       plugins: [
         'Notify'
-      ]
+      ],
+      all: true,
+      iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
       // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
       // i18n: 'de' // Quasar language
     },
-    // animations: 'all' --- includes all animations
-    animations: [],
+    animations: 'all' ,
+    // --- includes all animations
+    // animations: [],
     ssr: {
       pwa: false
     },
