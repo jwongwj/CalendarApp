@@ -40,54 +40,40 @@
     <q-modal v-model="basicModal" class="container">
       <div class="modalDesign">
         <div class>
-          <div class="floatRight">
+          <div v-if="showModal" class="floatRight">
             <q-btn color="amber" @click="basicModal = false" label="X">
               <q-tooltip anchor="center left" self="center right" :offset="[10,0]">
                 <strong>Close</strong>
               </q-tooltip>
             </q-btn>
           </div>
-          <div
-            class="text-weight-bolder q-mb-md modalTitle"
-          >{{date}} {{mth | convertMthToString}} {{year}}</div>
-        </div>
-        <div class="modalList">
-          <q-list inset-separator class v-for="(day, index) in daysPerWeek" :key="index">
-            <q-item>
-              <div class="tightenList">
-                <q-item-side avatar/>
-                <q-item-main label="test"/>
-                <q-item-side right>
-                  <q-btn flat round dense icon="more_vert" text-color="black" class="iconStyle">
-                    <q-popover>
-                      <q-list link>
-                        <q-item v-close-overlay>
-                          <q-item-main label="Reply"/>
-                        </q-item>
-                        <q-item v-close-overlay>
-                          <q-item-main label="Forward"/>
-                        </q-item>
-                        <q-item v-close-overlay>
-                          <q-item-main label="Delete"/>
-                        </q-item>
-                      </q-list>
-                    </q-popover>
-                  </q-btn>
-                </q-item-side>
-              </div>
-            </q-item>
-          </q-list>
-        </div>
-        <div class="modalBtm">
-          <div class="listCountLbl">
-            <label>{{lblCountList}}{{totalCount}}</label>
+          <div v-else class="floatRight">
+            <q-btn round color="black" icon="keyboard_backspace" @click="backToList">
+              <q-tooltip anchor="center right" self="center left" :offset="[10,0]">
+                <strong>Back To List</strong>
+              </q-tooltip>
+            </q-btn>
           </div>
+          <div>
+            <div
+              class="text-weight-bolder q-mb-md modalTitle"
+            >{{date}} {{mth | convertMthToString}} {{year}}</div>
+          </div>
+        </div>
+        <div v-if="showModal">
+          <list-component/>
           <div class="floatRight btmPosition">
-            <q-btn round color="deep-orange" icon="add_circle_outline">
+            <q-btn round color="deep-orange" icon="add_circle_outline" @click="createEvents">
               <q-tooltip anchor="center left" self="center right" :offset="[10,0]">
                 <strong>Add Events</strong>
               </q-tooltip>
             </q-btn>
+          </div>
+        </div>
+        <div v-else>
+          <event-component/>
+          <div class="btmPosition">
+            <q-btn class="addEventBtn" color="primary" @click="addEvents">{{addEvent}}</q-btn>
           </div>
         </div>
       </div>
@@ -96,8 +82,19 @@
 </template>
 
 <script>
+import Lists from "src/components/ListComponent.vue";
+import Events from "src/components/EventsComponent.vue";
+
+const alerts = [
+  { color: "secondary", message: "Event Added", icon: "calendar_today" }
+];
+
 export default {
   name: "calendar-component",
+  components: {
+    "list-component": Lists,
+    "event-component": Events
+  },
   data: () => {
     return {
       calendarDate: 0,
@@ -107,11 +104,10 @@ export default {
       arrayDates: [],
       allArr: [],
       daysPerWeek: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      eventDate: "",
       basicModal: false,
       date: "",
-      lblCountList: "No. of Events: ",
-      totalCount: 7
+      showModal: false,
+      addEvent: " Add Event"
     };
   },
   mounted() {
@@ -197,10 +193,23 @@ export default {
       return false;
     },
     editEvents(val) {
-      this.eventDate = `${val}/${this.mth}/${this.year}`;
-      console.log(this.eventDate);
       this.basicModal = true;
+      this.showModal = true;
       this.date = val;
+    },
+    addEvents() {
+      this.showModal = true;
+      const { color, icon, message } = alerts[0];
+
+      this.$q.notify({
+        color, icon, message
+      });
+    },
+    createEvents() {
+      this.showModal = false;
+    },
+    backToList() {
+      this.showModal = true;
     }
   }
 };
@@ -277,62 +286,38 @@ export default {
   font-size: 20px;
 }
 
-.modalDesign {
-  padding: 30px;
-  width: 50vw;
-  height: 80vh;
-}
-
-.modalTitle {
-  top: 0vh;
-  font-size: 20px;
-  width: 300px;
-}
-
-.fixed {
-  position: fixed;
-}
-
-.modalList {
-  margin-top: 3vh;
-  margin-bottom: 3vh;
-  overflow: hidden;
-  height: 60vh;
-  width: 44vw;
-  overflow-y: scroll;
-  border-style: solid;
-  border-color: lightgrey;
-  padding: 0px;
-}
-
-.container {
-  -ms-overflow-style: none;
-}
-.container::-webkit-scrollbar {
-  display: none;
-}
-
-.q-list .q-mt-md .q-list-inset-separator {
-  margin-top: 0px;
-}
-
-.tightenList {
-  margin: 0px;
-}
-
-.iconStyle {
-  right: 0;
-  top: 0;
-  position: absolute;
-}
-
 .floatRight {
   float: right;
 }
 
 .btmPosition {
-  bottom: 2vh;
+  bottom: 3%;
   position: absolute;
-  right: 3vw;
+  right: 1.5%;
+}
+
+.floatLeft {
+  float: left;
+}
+
+.topLeftPosition {
+  top: 5%;
+  position: absolute;
+  left: 3%;
+}
+
+.modalTitle {
+  /* width: 500px;
+  padding-left: 18vw; */
+}
+
+.addEventBtn {
+  width: 48.5vw;
+}
+
+@media only screen and (max-width: 766px), (max-height: 500px) {
+  .addEventBtn {
+    width: 97vw;
+  }
 }
 </style>
