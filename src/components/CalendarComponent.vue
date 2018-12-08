@@ -32,7 +32,7 @@
 <style>
 .indvCells {
   float: left;
-  width: 7.2vw;
+  width: 12vw;
   height: 12vh;
   font-size: 10px;
   border-radius: 8px;
@@ -54,8 +54,8 @@
 }
 
 .wholeCalendar {
-  width: 55%;
-  top: 75px;
+  width: 90%;
+  top: 70px;
   position: fixed;
   background-color: gold;
   text-align: center;
