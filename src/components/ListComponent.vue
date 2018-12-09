@@ -4,10 +4,10 @@
       <q-item>
         <div class="tightenList">
           <div>
-            <q-item-side class="eventTime">{{test.eventStartTime}} {{test.eventEndTime}}</q-item-side>
+            <q-item-side class="eventTime">{{test.start}} {{test.end}}</q-item-side>
           </div>
-          <q-item-main class="eventDetails" :label="test.eventTitle"/>
-          <q-item-main class="eventDetails noMargin" color="grey" :label="test.eventDetails"/>
+          <q-item-main class="eventDetails" :label="test.title"/>
+          <q-item-main class="eventDetails noMargin" color="grey" :label="test.details"/>
           <q-item-side right>
             <q-btn flat round dense icon="more_vert" text-color="black" class="iconStyle">
               <q-popover>
@@ -34,33 +34,38 @@
 </template>
 
 <script>
+import { LocalStorage, SessionStorage } from "quasar";
 export default {
   name: "list-component",
   data: () => {
     return {
-      tests: [
-        {
-          eventTitle: "Meet Esther",
-          eventDetails: "Go shopping",
-          eventStartTime: "0600",
-          eventEndTime: "2300"
-        },
-        {
-          eventTitle: "Mahjong", // Max 36
-          eventDetails: "I WANT",
-          eventStartTime: "1600",
-          eventEndTime: "2000"
-        }
-      ],
+      tests: [],
       lblCountList: "No. of Events: ",
-      totalCount: ""
+      totalCount: "",
+      date: "",
+      mth: "",
+      year: ""
     };
   },
   created() {
+    console.log("test created");
     this.totalCount = this.tests.length;
+    console.log(this.$on("createList").$parent);
+    this.$on("createList", (data) => {
+      // this.date = data.date;
+      // this.mth = data.mth;
+      // this.year = data.year;
+      console.log("on");
+      var key = `${data.date}/${data.mth}/${data.year}`;
+      this.tests = LocalStorage.get.item(key);
+    });
   },
   methods: {
-    addEvents() {}
+    passDates(date, mth, year) {
+      console.log("passDates");
+      var key = `${date}/${mth}/${year}`;
+      this.tests = LocalStorage.get.item(key);
+    }
   }
 };
 </script>
@@ -92,6 +97,7 @@ export default {
   border-style: solid;
   border-color: lightgrey;
   padding: 0px;
+  border-radius: 8px;
 }
 
 .container {

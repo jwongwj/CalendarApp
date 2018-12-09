@@ -18,7 +18,7 @@
           <tr v-for="(ea,index) in allArr" :key="index">
             <q-btn
               color="yellow-2"
-              class="indvCells"
+              :class="{'indvCells' : true,  'todayClass' : (todayDate === val && todayMth === mth && todayYear === year)}"
               v-for="(val, ind) in ea"
               :key="ind"
               :disabled="isDisabled(val)"
@@ -26,7 +26,9 @@
             >
               <div v-if="val != ''" style="width: 100%; height:100%;">
                 <div>
-                  <label class="dateLabel">{{val}}</label>
+                  <label
+                    :class="{'dateLabel' : true, 'numberCircle' : (todayDate === val && todayMth === mth && todayYear === year)}"
+                  >{{val}}</label>
                 </div>
                 <div>
                   <label id="btnLabel" style="color: black;"></label>
@@ -61,7 +63,7 @@
           </div>
         </div>
         <div v-if="showModal">
-          <list-component/>
+          <list-component ref="createList"/>
           <div class="floatRight btmPosition">
             <q-btn round color="deep-orange" icon="add_circle_outline" @click="createEvents">
               <q-tooltip anchor="center left" self="center right" :offset="[10,0]">
@@ -71,7 +73,7 @@
           </div>
         </div>
         <div v-else>
-          <event-component/>
+          <event-component ref="submitForm"/>
           <div class="btmPosition">
             <q-btn class="addEventBtn" color="primary" @click="addEvents">{{addEvent}}</q-btn>
           </div>
@@ -84,10 +86,7 @@
 <script>
 import Lists from "src/components/ListComponent.vue";
 import Events from "src/components/EventsComponent.vue";
-
-const alerts = [
-  { color: "secondary", message: "Event Added", icon: "calendar_today" }
-];
+import alerts from "src/const/alerts.js";
 
 export default {
   name: "calendar-component",
@@ -107,7 +106,10 @@ export default {
       basicModal: false,
       date: "",
       showModal: false,
-      addEvent: " Add Event"
+      addEvent: " Add Event",
+      todayDate: "",
+      todayMth: "",
+      todayYear: ""
     };
   },
   mounted() {
@@ -121,15 +123,19 @@ export default {
       // Set Date based on inital vs Subsequent load
       if (initialLoad) {
         date = new Date();
-        day = date.getDay() + 1;
         this.mth = date.getMonth() + 1;
         this.year = date.getFullYear();
+
+        this.todayDate = date.getDate();
+        this.todayMth = date.getMonth() + 1;
+        this.todayYear = date.getFullYear();
       } else {
         this.allArr = [];
         this.calendarDate = 0;
-        date = new Date(this.year, this.mth - 1, 1);
-        day = date.getDay();
       }
+
+      date = new Date(this.year, this.mth - 1, 1);
+      day = date.getDay();
 
       // Date formatting
       // if (day == 0) day = 7;
@@ -196,13 +202,25 @@ export default {
       this.basicModal = true;
       this.showModal = true;
       this.date = val;
+      const data = {
+        'date': this.date,
+        'mth': this.mth,
+        'year': this.year
+      }
+      this.$emit('createList', data);
+      //this.$refs.createList.passDates(this.date, this.mth, this.year);
     },
     addEvents() {
       this.showModal = true;
+      this.$refs.submitForm.validateForm();
       const { color, icon, message } = alerts[0];
 
+      this.$refs.submitForm.submitEvents(this.date, this.mth, this.year);
+
       this.$q.notify({
-        color, icon, message
+        color,
+        icon,
+        message
       });
     },
     createEvents() {
@@ -232,6 +250,11 @@ export default {
 .indvCells:hover {
   background-color: bisque !important;
   border: black !important;
+}
+
+.todayClass {
+  /* background-color: lightpink !important;
+  border: black !important; */
 }
 
 .headerCells {
@@ -306,18 +329,29 @@ export default {
   left: 3%;
 }
 
-.modalTitle {
-  /* width: 500px;
-  padding-left: 18vw; */
-}
-
 .addEventBtn {
   width: 48.5vw;
+}
+
+.numberCircle {
+  border-radius: 50%;
+  width: 1.2vw;
+  height: 2vh;
+  border: 1px solid darkorchid;
+  background-color: lightcoral;
 }
 
 @media only screen and (max-width: 766px), (max-height: 500px) {
   .addEventBtn {
     width: 97vw;
+  }
+
+  .numberCircle {
+    border-radius: 50%;
+    width: 3vw;
+    height: 2vh;
+    border: 1px solid darkorchid;
+    background-color: lightcoral;
   }
 }
 </style>
