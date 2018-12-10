@@ -67,23 +67,24 @@ export default {
   },
   methods: {
     submitEvents(date, mth, year) {
-      var event = [{
+      var event = {
         title: this.eventTitle,
         details: this.eventDetails,
         start: this.formatDatesString(this.dateStart),
         end: this.formatDatesString(this.dateEnd)
-      }];
+      };
 
-      var key = `${date}/${mth}/${year}`
-      if(LocalStorage.get.item(key) == null){
-        LocalStorage.set(key, event)
-      }else{
-        let array = [];
+      var key = `${date}/${mth}/${year}`;
+      let array = [];
+      if (LocalStorage.get.item(key) == null) {
+        array.push(event);
+        LocalStorage.set(key, array);
+      } else {
         array = LocalStorage.get.item(key);
-        array.push(event)
-        LocalStorage.set(key, array)
+        array.push(event);
+        LocalStorage.set(key, array);
       }
-   },
+    },
     validateForm() {
       let hasError = false;
       if (this.eventTitle != this.EMPTY) hasError = true;

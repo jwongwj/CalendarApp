@@ -62,8 +62,10 @@
             >{{date}} {{mth | convertMthToString}} {{year}}</div>
           </div>
         </div>
+
+        <component :is="componentId" ref="submitForm" :date="date" :mth="mth" :year="year"></component>
+
         <div v-if="showModal">
-          <list-component ref="createList"/>
           <div class="floatRight btmPosition">
             <q-btn round color="deep-orange" icon="add_circle_outline" @click="createEvents">
               <q-tooltip anchor="center left" self="center right" :offset="[10,0]">
@@ -73,7 +75,6 @@
           </div>
         </div>
         <div v-else>
-          <event-component ref="submitForm"/>
           <div class="btmPosition">
             <q-btn class="addEventBtn" color="primary" @click="addEvents">{{addEvent}}</q-btn>
           </div>
@@ -109,7 +110,8 @@ export default {
       addEvent: " Add Event",
       todayDate: "",
       todayMth: "",
-      todayYear: ""
+      todayYear: "",
+      componentId: ""
     };
   },
   mounted() {
@@ -199,19 +201,18 @@ export default {
       return false;
     },
     editEvents(val) {
+      this.componentId = "";
       this.basicModal = true;
       this.showModal = true;
+      this.componentId = "list-component";
+
       this.date = val;
-      const data = {
-        'date': this.date,
-        'mth': this.mth,
-        'year': this.year
-      }
-      this.$emit('createList', data);
-      //this.$refs.createList.passDates(this.date, this.mth, this.year);
+      if(this.$refs.submitForm !== undefined)
+      this.$refs.submitForm.passDates(this.date, this.mth, this.year);
     },
     addEvents() {
       this.showModal = true;
+      this.componentId = "list-component";
       this.$refs.submitForm.validateForm();
       const { color, icon, message } = alerts[0];
 
@@ -225,9 +226,11 @@ export default {
     },
     createEvents() {
       this.showModal = false;
+      this.componentId = "event-component";
     },
     backToList() {
       this.showModal = true;
+      this.componentId = "list-component";
     }
   }
 };

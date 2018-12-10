@@ -12,11 +12,11 @@
             <q-btn flat round dense icon="more_vert" text-color="black" class="iconStyle">
               <q-popover>
                 <q-list link>
-                  <q-item v-close-overlay>
-                    <q-item-main label="Edit"/>
+                  <q-item v-close-overlay >
+                    <q-item-main label="Edit" @click.native="editExistingEvent(index)"/>
                   </q-item>
                   <q-item v-close-overlay>
-                    <q-item-main label="Delete"/>
+                    <q-item-main label="Delete" @click.native="deleteExistingEvent(index)"/>
                   </q-item>
                 </q-list>
               </q-popover>
@@ -37,34 +37,30 @@
 import { LocalStorage, SessionStorage } from "quasar";
 export default {
   name: "list-component",
+  props: ["date", "mth", "year"],
   data: () => {
     return {
       tests: [],
       lblCountList: "No. of Events: ",
-      totalCount: "",
-      date: "",
-      mth: "",
-      year: ""
+      totalCount: ""
     };
   },
   created() {
-    console.log("test created");
+    this.passDates(this.date, this.mth, this.year);
     this.totalCount = this.tests.length;
-    console.log(this.$on("createList").$parent);
-    this.$on("createList", (data) => {
-      // this.date = data.date;
-      // this.mth = data.mth;
-      // this.year = data.year;
-      console.log("on");
-      var key = `${data.date}/${data.mth}/${data.year}`;
-      this.tests = LocalStorage.get.item(key);
-    });
   },
   methods: {
     passDates(date, mth, year) {
-      console.log("passDates");
       var key = `${date}/${mth}/${year}`;
       this.tests = LocalStorage.get.item(key);
+
+      this.totalCount = (this.tests) ? this.tests.length : 0;
+    },
+    editExistingEvent(index){
+      console.log("fired")
+      let array = [];
+      array = this.tests;
+      console.log(array[index]);
     }
   }
 };
