@@ -62,32 +62,46 @@ export default {
       dateEnd: EMPTY,
       eventTitle: EMPTY,
       eventDetails: EMPTY,
-      defaultValue: startOfDate(today, "year")
+      defaultValue: startOfDate(today, "year"),
+      eventBoolean: false
     };
+  },
+  created() {
+    this.editEvent();
+    // this.eventBoolean = false;
   },
   methods: {
     submitEvents(date, mth, year) {
       var event = {
-        title: this.eventTitle,
-        details: this.eventDetails,
+        title: this.formatInput(this.eventTitle),
+        details: this.formatInput(this.eventDetails),
         start: this.formatDatesString(this.dateStart),
         end: this.formatDatesString(this.dateEnd)
       };
 
       var key = `${date}/${mth}/${year}`;
       let array = [];
-      if (LocalStorage.get.item(key) == null) {
-        array.push(event);
+      if (this.eventBoolean) {
+        array = LocalStorage.get.item(key);
+        let index = LocalStorage.get.item("editEventIndex");
+        array[index] = event;
         LocalStorage.set(key, array);
       } else {
-        array = LocalStorage.get.item(key);
-        array.push(event);
-        LocalStorage.set(key, array);
+        if (LocalStorage.get.item(key) == null) {
+          array.push(event);
+          LocalStorage.set(key, array);
+        } else {
+          array = LocalStorage.get.item(key);
+          array.push(event);
+          LocalStorage.set(key, array);
+        }
       }
     },
     validateForm() {
       let hasError = false;
-      if (this.eventTitle != this.EMPTY) hasError = true;
+      let title = "";
+      if (this.eventTitle) title = this.eventTitle.trim();
+      if (title == "") hasError = true;
       if (
         this.formatDatesNumber(this.dateStart) >
         this.formatDatesNumber(this.dateEnd)
@@ -99,9 +113,29 @@ export default {
       return Number(this.formatDatesString(date));
     },
     formatDatesString(date) {
-      return (
-        date.toString().substring(16, 18) + date.toString().substring(19, 21)
-      );
+      if (date) {
+        return (
+          date.toString().substring(16, 18) + date.toString().substring(19, 21)
+        );
+      } else {
+        return "";
+      }
+    },
+    formatInput(data) {
+      return !data ? "" : data;
+    },
+    editEvent() {
+      let key = `editEvent`;
+      let existingData = LocalStorage.get.item(key);
+      if (existingData !== "null") {
+        this.dateStart = existingData.start;
+        this.dateEnd = existingData.end;
+        this.eventTitle = existingData.title;
+        this.eventDetails = existingData.details;
+        this.eventBoolean = true;
+        LocalStorage.set(key, null);
+        this.$emit("event");
+      }
     }
   }
 };

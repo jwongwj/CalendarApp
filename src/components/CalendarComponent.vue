@@ -30,8 +30,10 @@
                     :class="{'dateLabel' : true, 'numberCircle' : (todayDate === val && todayMth === mth && todayYear === year)}"
                   >{{val}}</label>
                 </div>
-                <div>
-                  <label id="btnLabel" style="color: black;"></label>
+                <div v-if="checkButtonArray(val)">
+                  <div id="btnLabel" class="eachLabel" style="color: black;" v-for="(each, arrayIndex) in getObjByKey(val)" :key="arrayIndex">
+                    {{each}}
+                  </div>
                 </div>
               </div>
             </q-btn>
@@ -63,7 +65,15 @@
           </div>
         </div>
 
-        <component :is="componentId" ref="submitForm" :date="date" :mth="mth" :year="year"></component>
+        <component
+          :is="componentId"
+          ref="submitForm"
+          :date="date"
+          :mth="mth"
+          :year="year"
+          v-on:editEvent="editEvent()"
+          v-on:event="editButton()"
+        ></component>
 
         <div v-if="showModal">
           <div class="floatRight btmPosition">
@@ -88,6 +98,7 @@
 import Lists from "src/components/ListComponent.vue";
 import Events from "src/components/EventsComponent.vue";
 import alerts from "src/const/alerts.js";
+import { LocalStorage, SessionStorage } from "quasar";
 
 export default {
   name: "calendar-component",
@@ -111,7 +122,10 @@ export default {
       todayDate: "",
       todayMth: "",
       todayYear: "",
-      componentId: ""
+      componentId: "",
+      eventsInIndvDates: [42],
+      count: 0,
+      e: []
     };
   },
   mounted() {
@@ -134,6 +148,7 @@ export default {
       } else {
         this.allArr = [];
         this.calendarDate = 0;
+        this.count = 0;
       }
 
       date = new Date(this.year, this.mth - 1, 1);
@@ -165,6 +180,8 @@ export default {
         } else {
           arr.push("");
         }
+        // this.eventsInIndvDates[i] = this.addEventsToDates(i);
+        this.addEventsToDates(i);
       }
 
       // Add Array for Display & Remove last row if empty
@@ -173,6 +190,44 @@ export default {
         if (i == 5 && arrayToPush[0] == "") {
         } else {
           this.allArr.push(arrayToPush);
+        }
+      }
+    },
+    addEventsToDates(date) {
+      // if (date != "") {
+      //   let key = `${date}/${this.mth}/${this.year}`;
+
+      //   if (LocalStorage.get.item(key)) {
+      //     let ev = LocalStorage.get.item(key);
+      //     let toPush = [];
+      //     for (var i = 0; i < ev.length; i++) {
+      //       toPush.push(ev[i].title);
+      //     }
+      //     if (toPush.length == 1) return "";
+      //     let obj = {
+      //       key: key,
+      //       arr: toPush
+      //     };
+      //     return obj;
+      //   }
+      // }
+
+      // return "";
+
+      if (date != "") {
+        let key = `${date}/${this.mth}/${this.year}`;
+
+        if (LocalStorage.get.item(key)) {
+          let ev = LocalStorage.get.item(key);
+          let toPush = [];
+          for (var i = 0; i < ev.length; i++) {
+            toPush.push(ev[i].title);
+          }
+          let obj = {
+            key: key,
+            arr: toPush
+          };
+          this.eventsInIndvDates[key] = obj;
         }
       }
     },
@@ -207,30 +262,59 @@ export default {
       this.componentId = "list-component";
 
       this.date = val;
-      if(this.$refs.submitForm !== undefined)
-      this.$refs.submitForm.passDates(this.date, this.mth, this.year);
+      if (this.$refs.submitForm !== undefined)
+        this.$refs.submitForm.passDates(this.date, this.mth, this.year);
     },
     addEvents() {
-      this.showModal = true;
-      this.componentId = "list-component";
-      this.$refs.submitForm.validateForm();
-      const { color, icon, message } = alerts[0];
+      let hasErrors = this.$refs.submitForm.validateForm();
+      if (hasErrors) {
+        const { color, icon, message } = alerts[1];
+        this.$q.notify({
+          color,
+          icon,
+          message
+        });
+      } else {
+        this.showModal = true;
+        this.componentId = "list-component";
+        const { color, icon, message } = alerts[0];
 
-      this.$refs.submitForm.submitEvents(this.date, this.mth, this.year);
+        this.$refs.submitForm.submitEvents(this.date, this.mth, this.year);
 
-      this.$q.notify({
-        color,
-        icon,
-        message
-      });
+        this.$q.notify({
+          color,
+          icon,
+          message
+        });
+      }
     },
     createEvents() {
       this.showModal = false;
       this.componentId = "event-component";
+      this.addEvent = "Add Event";
     },
     backToList() {
       this.showModal = true;
       this.componentId = "list-component";
+    },
+    editEvent() {
+      this.showModal = false;
+      this.componentId = "event-component";
+    },
+    editButton() {
+      this.addEvent = "Edit Event";
+    },
+    checkButtonArray(date) {
+      let key = `${date}/${this.mth}/${this.year}`;
+      if(this.eventsInIndvDates[key] != null){
+          if(this.eventsInIndvDates[key]["arr"].length > 0)
+            return true;
+      }
+      return false;
+    },
+    getObjByKey(date){
+      let key = `${date}/${this.mth}/${this.year}`;
+      return this.eventsInIndvDates[key]["arr"];
     }
   }
 };
@@ -342,6 +426,12 @@ export default {
   height: 2vh;
   border: 1px solid darkorchid;
   background-color: lightcoral;
+}
+
+.eachLabel{
+  background-color: white;
+  border: 1px solid black;
+  overflow: hidden;
 }
 
 @media only screen and (max-width: 766px), (max-height: 500px) {

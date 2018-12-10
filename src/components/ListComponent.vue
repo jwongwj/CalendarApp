@@ -12,7 +12,7 @@
             <q-btn flat round dense icon="more_vert" text-color="black" class="iconStyle">
               <q-popover>
                 <q-list link>
-                  <q-item v-close-overlay >
+                  <q-item v-close-overlay>
                     <q-item-main label="Edit" @click.native="editExistingEvent(index)"/>
                   </q-item>
                   <q-item v-close-overlay>
@@ -42,25 +42,35 @@ export default {
     return {
       tests: [],
       lblCountList: "No. of Events: ",
-      totalCount: ""
+      totalCount: "",
+      key: ""
     };
   },
   created() {
     this.passDates(this.date, this.mth, this.year);
-    this.totalCount = this.tests.length;
+    this.setTotalCount();
   },
   methods: {
+    setTotalCount() {
+      this.totalCount = this.tests ? this.tests.length : 0;
+    },
     passDates(date, mth, year) {
       var key = `${date}/${mth}/${year}`;
+      this.key = key;
       this.tests = LocalStorage.get.item(key);
-
-      this.totalCount = (this.tests) ? this.tests.length : 0;
+      this.setTotalCount();
     },
-    editExistingEvent(index){
-      console.log("fired")
-      let array = [];
-      array = this.tests;
-      console.log(array[index]);
+    deleteExistingEvent(index) {
+      this.tests.splice(index, 1);
+      LocalStorage.set(this.key, this.tests);
+      this.setTotalCount();
+    },
+    editExistingEvent(index) {
+      let key = `editEvent`;
+      LocalStorage.set(key, this.tests[index]);
+      key = `editEventIndex`;
+      LocalStorage.set(key, index);
+      this.$emit("editEvent");
     }
   }
 };
@@ -132,8 +142,14 @@ export default {
   color: rgb(173, 169, 169);
 }
 
+.listHover {
+  padding: 0px;
+  margin: 0px;
+  height: 8vh;
+}
+
 .listHover :hover {
-  background-color: lightgrey;
+  /* background-color: lightgrey; */
 }
 
 .listCountLbl {

@@ -6,10 +6,7 @@
 
 <script>
 export default {
-  name: "App",
-  created() {
-    console.clear(); // To be removed after production
-  }
+  name: "App"
 };
 </script>
 
