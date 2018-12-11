@@ -30,10 +30,12 @@
                     :class="{'dateLabel' : true, 'numberCircle' : (todayDate === val && todayMth === mth && todayYear === year)}"
                   >{{val}}</label>
                 </div>
-                <div v-if="checkButtonArray(val)">
+                <div class="allLabel" v-if="checkButtonArray(val)">
+                  <div style="height: 2.4vh; padding-top: 4px;"><label style="color: black; font-size: 9px; ">Events</label></div>
                   <div
                     id="btnLabel"
                     class="eachLabel"
+                    :class="classExtraction(arrayIndex)"
                     style="color: black;"
                     v-for="(each, arrayIndex) in getObjByKey(val)"
                     :key="arrayIndex"
@@ -130,7 +132,8 @@ export default {
       componentId: "",
       eventsInIndvDates: [42],
       count: 0,
-      e: []
+      e: [],
+      dynamicClass: ['redClass', 'orangeClass', 'yellowClass', 'greenClass', 'blueClass', 'darkblueClass', 'purpleClass']
     };
   },
   mounted() {
@@ -306,6 +309,13 @@ export default {
         for (var i = 0; i < 42; i++) {
           this.addEventsToDates(i);
         }
+    },
+    classExtraction(index){
+      if(index < 7){
+        return this.dynamicClass[index]
+      }else{
+        return "";
+      }
     }
   }
 };
@@ -315,40 +325,30 @@ export default {
 .indvCells {
   float: left;
   width: 12vw;
-  height: 12vh;
+  height: 13vh;
   font-size: 10px;
   border-radius: 8px;
-}
-
-.q-focus-helper .q-btn-inner .row .col .items-center .justify-center {
-  text-align: right;
-  color: black;
+  padding: 1px;
 }
 
 .indvCells:hover {
   background-color: bisque !important;
-  border: black !important;
-}
-
-.todayClass {
-  /* background-color: lightpink !important;
-  border: black !important; */
 }
 
 .headerCells {
   float: left;
-  padding: 5px;
+  padding: 0px;
   width: 14.2%;
 }
 
 .wholeCalendar {
   width: 90%;
-  top: 9%;
+  top: 8%;
   position: fixed;
   background-color: gold;
   text-align: center;
   display: inline-flex;
-  height: 90%;
+  height: 91%;
   border-radius: 8px;
   box-shadow: 2px 2px 5px grey;
 }
@@ -360,18 +360,18 @@ export default {
 
 .subBtn {
   float: left;
-  width: 5%;
-  height: 3%;
+  width: 3vw;
+  height: 2vh;
 }
 
 .addBtn {
   float: right;
-  width: 5%;
-  height: 3%;
+  width: 3vw;
+  height: 2vh;
 }
 
 .thStyle {
-  padding-top: 1.5vh;
+  padding-top: 1vh;
   padding-left: 2vw;
   width: 100%;
 }
@@ -420,9 +420,48 @@ export default {
 }
 
 .eachLabel {
-  background-color: white;
-  border: 1px solid black;
+  border: 0px solid black;
   overflow: hidden;
+  height: 1.5vh;
+  width: 100%;
+  font-size: 8px;
+  text-align: center;
+}
+
+.allLabel{
+  position: absolute;
+  top: 0px;
+  width: 98%;
+  height: 13vh;
+  overflow: hidden;
+}
+
+.redClass{
+  background-color: indianred
+}
+
+.orangeClass{
+  background-color: orange
+}
+
+.yellowClass{
+  background-color: yellow
+}
+
+.greenClass{
+  background-color: lightgreen
+}
+
+.blueClass{
+  background-color: lightskyblue
+}
+
+.darkblueClass{
+  background-color: blue
+}
+
+.purpleClass{
+  background-color: purple
 }
 
 @media only screen and (max-width: 766px), (max-height: 500px) {
