@@ -64,6 +64,7 @@ export default {
       this.tests.splice(index, 1);
       LocalStorage.set(this.key, this.tests);
       this.setTotalCount();
+      this.$emit("updateCalendar");
     },
     editExistingEvent(index) {
       let key = `editEvent`;

@@ -31,9 +31,13 @@
                   >{{val}}</label>
                 </div>
                 <div v-if="checkButtonArray(val)">
-                  <div id="btnLabel" class="eachLabel" style="color: black;" v-for="(each, arrayIndex) in getObjByKey(val)" :key="arrayIndex">
-                    {{each}}
-                  </div>
+                  <div
+                    id="btnLabel"
+                    class="eachLabel"
+                    style="color: black;"
+                    v-for="(each, arrayIndex) in getObjByKey(val)"
+                    :key="arrayIndex"
+                  >{{each}}</div>
                 </div>
               </div>
             </q-btn>
@@ -73,6 +77,7 @@
           :year="year"
           v-on:editEvent="editEvent()"
           v-on:event="editButton()"
+          v-on:updateCalendar="updateCalendar()"
         ></component>
 
         <div v-if="showModal">
@@ -180,7 +185,6 @@ export default {
         } else {
           arr.push("");
         }
-        // this.eventsInIndvDates[i] = this.addEventsToDates(i);
         this.addEventsToDates(i);
       }
 
@@ -194,26 +198,6 @@ export default {
       }
     },
     addEventsToDates(date) {
-      // if (date != "") {
-      //   let key = `${date}/${this.mth}/${this.year}`;
-
-      //   if (LocalStorage.get.item(key)) {
-      //     let ev = LocalStorage.get.item(key);
-      //     let toPush = [];
-      //     for (var i = 0; i < ev.length; i++) {
-      //       toPush.push(ev[i].title);
-      //     }
-      //     if (toPush.length == 1) return "";
-      //     let obj = {
-      //       key: key,
-      //       arr: toPush
-      //     };
-      //     return obj;
-      //   }
-      // }
-
-      // return "";
-
       if (date != "") {
         let key = `${date}/${this.mth}/${this.year}`;
 
@@ -286,6 +270,8 @@ export default {
           icon,
           message
         });
+
+        this.updateCalendar();
       }
     },
     createEvents() {
@@ -306,15 +292,20 @@ export default {
     },
     checkButtonArray(date) {
       let key = `${date}/${this.mth}/${this.year}`;
-      if(this.eventsInIndvDates[key] != null){
-          if(this.eventsInIndvDates[key]["arr"].length > 0)
-            return true;
+      if (this.eventsInIndvDates[key] != null) {
+        if (this.eventsInIndvDates[key]["arr"].length > 0) return true;
       }
       return false;
     },
-    getObjByKey(date){
+    getObjByKey(date) {
       let key = `${date}/${this.mth}/${this.year}`;
       return this.eventsInIndvDates[key]["arr"];
+    },
+    updateCalendar(){
+      console.log("updateC")
+        for (var i = 0; i < 42; i++) {
+          this.addEventsToDates(i);
+        }
     }
   }
 };
@@ -428,7 +419,7 @@ export default {
   background-color: lightcoral;
 }
 
-.eachLabel{
+.eachLabel {
   background-color: white;
   border: 1px solid black;
   overflow: hidden;
