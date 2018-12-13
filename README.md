@@ -3,7 +3,7 @@
 Simple Calendar & Scheduling to learn Vue and Quasar Framework
 
 Project Commencement Date : 4 Dec 2018
-Project End Date : 11 Dec 2018
+<p>Project End Date : 11 Dec 2018
 
 ![ss](https://user-images.githubusercontent.com/36320179/49886989-1cf1ba00-fe76-11e8-86ab-27158ee8dbc3.JPG)
 
